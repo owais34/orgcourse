@@ -1,6 +1,7 @@
 from utils.json_utils import Jsoner
 from utils.folder_parser import scan_sub_dirs,scan_videofiles
 from utils.repository_module import Repository
+import vlc 
 import metadata.setup
 import ffmpeg
 import os
@@ -19,11 +20,17 @@ class Course(Jsoner):
         if dictForm == None:
             self.directoryPath = directoryPath
             self.subModuleList = self.createModule()
+            self.moduleIndex = 0
+            self.videoIndex = 0
+            self.stoppedAtTime = 0
         else:
             self.directoryPath = dictForm.get("directoryPath")
             self.subModuleList = []
             for subModule in dictForm.get("subModuleList"):
                 self.subModuleList.append(SubModule(dictForm=subModule))
+            self.moduleIndex = dictForm.get("moduleIndex")
+            self.stoppedAtTime = dictForm.get("stoppedAtTime")
+            self.videoIndex = dictForm.get("videoIndex")
             
 
     def createModule(self) -> list:
@@ -37,6 +44,11 @@ class Course(Jsoner):
                 subModuleList.append(SubModule(subModuleDirectory["path"],subModuleDirectory["name"]))
         
         return subModuleList
+    
+    def getCurrentPlayable(self) -> vlc.MediaPlayer:
+        mediaPlayerInstance = vlc.MediaPlayer(self.subModuleList[self.moduleIndex].videoList[self.videoIndex].path)
+        mediaPlayerInstance.set_time(self.stoppedAtTime)
+        return mediaPlayerInstance
 
 
 
@@ -73,13 +85,17 @@ class VideoFile:
         if dictForm == None:
             self.path = path
             self.name = name
-            self.duration = float(ffmpeg.probe(path)["streams"][0]["duration"])
+            self.duration = self.getDurationMs()
             self.durationPlayed = 0
         else:
             self.path = dictForm.get("path")
             self.name = dictForm.get("name")
             self.duration = dictForm.get("duration")
             self.durationPlayed = dictForm.get("durationPlayed")
+
+    def getDurationMs(self) -> int:
+        durationMs = int(float(ffmpeg.probe(self.path)["streams"][0]["duration"]) * 1000)
+        return durationMs
 
 
 

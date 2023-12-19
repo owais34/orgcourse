@@ -2,8 +2,11 @@ from metadata.setup import init
 from utils.course_module import Course
 from utils.course_module import CourseManager
 import sys,time
+import vlc
 
 course_manager_master = CourseManager()
+
+course_resumed = None
 
 
 def main():
@@ -45,6 +48,18 @@ def listAllCourse():
    return
 
 def selectCourseToResume():
+   course_index = input("Enter the index number of course from courselist : ")
+   try:
+      course_index = int(course_index)
+      if course_index >= len(course_manager_master.courseList):
+         print(" Invalid input !!! Try again !!")
+         return
+      global course_resumed
+      course_resumed = course_manager_master.courseList[course_index]
+      mediaPlayerInstance = 
+
+   except:
+      print(" Invalid input !!! Try again !!")
    return
 
 
