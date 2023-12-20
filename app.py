@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for ,send_file
 from metadata.setup import init
 from utils.course_module import Course
 from utils.course_module import CourseManager
+import os
 
 course_manager_master = CourseManager()
 
@@ -49,6 +50,9 @@ app = Flask(__name__)
 
 @app.route("/cdn/<path>")
 def custom_static(path):
+    path = str(path).replace(">",os.path.sep)
+    print(path)
+    
     return send_file(path)
 
 
