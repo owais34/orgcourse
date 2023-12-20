@@ -56,6 +56,11 @@ def custom_static(path):
     return send_file(path)
 
 
+@app.route("/")
+def home():
+      return render_template("index.html")
+
+
 if __name__ == "__main__": 
 	init()
 	app.run(debug=False) 
