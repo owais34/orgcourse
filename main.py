@@ -55,9 +55,9 @@ def selectCourseToResume():
          print(" Invalid input !!! Try again !!")
          return
       global course_resumed
-      course_resumed = course_manager_master.courseList[course_index]
-      mediaPlayerInstance = course_resumed.getCurrentPlayable()
-      mediaPlayerInstance.play()
+      # course_resumed = course_manager_master.courseList[course_index]
+      # mediaPlayerInstance = course_resumed.getCurrentPlayable()
+      # mediaPlayerInstance.play()
 
    except:
       print(" Invalid input !!! Try again !!")

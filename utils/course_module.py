@@ -1,7 +1,6 @@
 from utils.json_utils import Jsoner
 from utils.folder_parser import scan_sub_dirs,scan_videofiles
 from utils.repository_module import Repository
-import vlc 
 import metadata.setup
 import ffmpeg
 import os
@@ -45,10 +44,10 @@ class Course(Jsoner):
         
         return subModuleList
     
-    def getCurrentPlayable(self) -> vlc.MediaPlayer:
-        mediaPlayerInstance = vlc.MediaPlayer(self.subModuleList[self.moduleIndex].videoList[self.videoIndex].path)
-        mediaPlayerInstance.set_time(self.stoppedAtTime)
-        return mediaPlayerInstance
+    # def getCurrentPlayable(self) -> vlc.MediaPlayer:
+    #     mediaPlayerInstance = vlc.MediaPlayer(self.subModuleList[self.moduleIndex].videoList[self.videoIndex].path)
+    #     mediaPlayerInstance.set_time(self.stoppedAtTime)
+    #     return mediaPlayerInstance
 
 
 
