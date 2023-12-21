@@ -58,9 +58,11 @@ def custom_static(path):
 
 @app.route("/")
 def home():
-      return render_template("index.html")
+    return render_template("index.html")
 
 
-if __name__ == "__main__": 
-	init()
-	app.run(debug=False) 
+if __name__ == "__main__":
+    init()
+    app.jinja_env.auto_reload = True
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    app.run(debug=True) 
