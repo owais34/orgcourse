@@ -4,7 +4,8 @@ from utils.repository_module import Repository
 import metadata.setup
 import ffmpeg
 import os
-import cv2
+import subprocess
+import shutil
 
 class Course(Jsoner):
     #directoryPath
@@ -95,6 +96,7 @@ class VideoFile:
             self.name = name
             self.duration = self.getDurationMs()
             self.durationPlayed = 0
+
         else:
             self.path = dictForm.get("path")
             self.name = dictForm.get("name")
@@ -104,6 +106,13 @@ class VideoFile:
     def getDurationMs(self) -> int:
         durationMs = int(float(ffmpeg.probe(self.path)["streams"][0]["duration"]) * 1000)
         return durationMs
+    
+    def getThumbnailImage(self) -> str:
+        subprocess.call([
+            "ffmpeg", "-ss", "00:00:00.02","-i", "%s" % self.path, "-vf", "'scale=250:250:force_original_aspect_ratio=decrease'",
+              "-vframes", "1", "%s" %metadata.setup.temporary_thumbnail_name
+        ])
+
 
 
 

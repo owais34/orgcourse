@@ -29,6 +29,8 @@ class Jsoner:
             jsonstr = self.handleDict(object)
         elif isinstance(object,list):
             jsonstr = self.handleList(object)
+        elif isinstance(object,set):
+            jsonstr = self.handleList(list(object))
         else:
             jsonstr = self.handleObject(object)
 
