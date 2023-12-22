@@ -4,6 +4,7 @@ from utils.repository_module import Repository
 import metadata.setup
 import ffmpeg
 import os
+import cv2
 
 class Course(Jsoner):
     #directoryPath
@@ -22,6 +23,9 @@ class Course(Jsoner):
             self.moduleIndex = 0
             self.videoIndex = 0
             self.stoppedAtTime = 0
+            self.duration = 0
+            for subModule in self.subModuleList:
+                self.duration+=subModule.duration
         else:
             self.directoryPath = dictForm.get("directoryPath")
             self.subModuleList = []
@@ -30,6 +34,7 @@ class Course(Jsoner):
             self.moduleIndex = dictForm.get("moduleIndex")
             self.stoppedAtTime = dictForm.get("stoppedAtTime")
             self.videoIndex = dictForm.get("videoIndex")
+            self.duration = dictForm.get("duration")
             
 
     def createModule(self) -> list:
@@ -61,12 +66,16 @@ class SubModule:
             self.videoList = []
             if directoryPath != None:
                 self.videoList=self.setVideoList(scan_videofiles(directoryPath,metadata.setup.supported_video_formats))
+            self.duration = 0
+            for video in self.videoList:
+                self.duration+=video.duration
         else:
             self.directoryPath = dictForm.get("directoryPath")
             self.name = dictForm.get("name")
             self.videoList = []
             for video in dictForm.get("videoList"):
                 self.videoList.append(VideoFile(dictForm=video))
+            self.duration = dictForm.get("duration")
                
     def setVideoList(self, videoFilesList: list) -> list:
         videoList = []
@@ -127,10 +136,24 @@ class CourseManager(Jsoner,Repository):
                 self.persistChanges(self.getJson())
 
     def listCourses(self):
+        courseListTemp = []
         for i in range(len(self.courseList)):
+            courseInfoDict = {}
             courseName = self.courseList[i].directoryPath.split(os.sep)[-1]
+            courseInfoDict["name"]=courseName
+            courseInfoDict["id"] = i
+            seconds = int(self.courseList[i].duration)/1000
+            hrs = int(seconds / 3600)
+            seconds = int(seconds % 3600)
+            courseInfoDict["duration"]= ""
+            if hrs != 0:
+                courseInfoDict["duration"]=courseInfoDict["duration"]+str(hrs)+" hrs"
+            if seconds!=0:
+                courseInfoDict["duration"]=courseInfoDict["duration"]+str(seconds)+" seconds"
+            courseListTemp.append(courseInfoDict)
+        return courseListTemp
 
-            print("  "+str(i)+": "+courseName)
+            
 
     
         

@@ -58,7 +58,7 @@ def custom_static(path):
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html", course_list = course_manager_master.listCourses())
 
 
 if __name__ == "__main__":
