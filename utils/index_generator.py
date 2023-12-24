@@ -13,7 +13,7 @@ class IndexGenerator(Repository,Jsoner):
         dictForm =  self.loadFromRepo()
         if dictForm != None:
             self.indexSet.update(dictForm["indexSet"])
-        self.persistChanges()
+        self.persistChanges(self.getJson())
 
     def getNewIndex(self, persistInstantly = False):
         key = self.generateRandomKey()
@@ -21,7 +21,7 @@ class IndexGenerator(Repository,Jsoner):
             key = self.generateRandomKey()
         self.indexSet.add(key)
         if counter == 0 or persistInstantly:
-            self.persistChanges()
+            self.persistChanges(self.getJson())
         counter = (counter + 1) % 10
         return key
 

@@ -18,7 +18,7 @@ class Repository:
             return None
 
 
-    def persistChanges(self, jsonForm):
+    def persistChanges(self, jsonForm: str):
         curpath = os.getcwd()
         persistance_folder = os.path.join(curpath,"repository")
         persistance_path = os.path.join(persistance_folder,self.__class__.__name__) + ".json"

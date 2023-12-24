@@ -1,10 +1,13 @@
 from flask import Flask, render_template, redirect, url_for ,send_file
 from metadata.setup import init
-from utils.course_module import Course
 from utils.course_module import CourseManager
+from utils.index_generator import IndexGenerator
 import os
 
 course_manager_master = CourseManager()
+index_generator = IndexGenerator()
+
+
 
 course_resumed = None
 
