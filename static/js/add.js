@@ -1,17 +1,17 @@
 
 const handleSubmit =() =>{
-    //console.log(document.getElementById("fullPath"))
-    let path = document.getElementById("fullPath").value
-
-    if (path.length === 0) {
+    //console.log(document.getElementById("fullfullPath"))
+    let fullPath = document.getElementById("fullPath").value
+    console.log(fullPath)
+    if (fullPath.length === 0) {
         return
     }
 
-    if (path.charAt(0)==="\"") {
-        path = path.substring(1)
+    if (fullPath.charAt(0)==="\"") {
+        fullPath = fullPath.substring(1)
     }
-    if (path.charAt(path.length-1)==="\"") {
-        path = path.substring(0, path.length-1)
+    if (fullPath.charAt(fullPath.length-1)==="\"") {
+        fullPath = fullPath.substring(0, fullPath.length-1)
     }
 
     document.getElementById("cardForm").setAttribute("hidden","true")
@@ -20,7 +20,7 @@ const handleSubmit =() =>{
     fetch(`${baseUrl}/add`, {
         method: 'POST',
         body: JSON.stringify({
-            path
+            fullPath
         })
     })
     .then(response => {
@@ -32,6 +32,9 @@ const handleSubmit =() =>{
 }
 
 document.getElementById("submitButton").addEventListener("click", handleSubmit);
+
+document.getElementById("success-spinner").setAttribute("hidden","true")
+document.getElementById("cardForm").removeAttribute("hidden")
 
 const baseUrl = "http://127.0.0.1:5000"
 

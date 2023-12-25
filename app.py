@@ -3,6 +3,7 @@ from metadata.setup import init
 from utils.course_module import CourseManager
 from utils.index_generator import IndexGenerator
 import os
+import json
 
 course_manager_master = CourseManager()
 index_generator = IndexGenerator()
@@ -68,7 +69,8 @@ def add():
     if request.method == 'GET':
         return render_template("add.html")
     else:
-        print(request.form.get("fullPath"))
+        print(json.loads(request.data))
+        
         return redirect("/")
 
 
