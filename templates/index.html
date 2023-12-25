@@ -3,6 +3,9 @@
 {% block head %}
     {{ super() }}
 {% endblock %}
+{% block navbar %}
+    {{ super() }}
+{% endblock %}
 {% block content %}
 {{super()}}
     <div class="row">
@@ -15,7 +18,7 @@
             
         </div>
     </div>
-    <div class="row bg-gray justify-content-center pt-4">
+    <div class="row  justify-content-center pt-4">
         {% for course in  course_list%} 
             <div class="card m-4 animate" style="width: 18rem;">
                 <img src="https://i.pinimg.com/564x/61/2d/9d/612d9d6e70fe54f4c10c41eaac9508af.jpg" height="250px" class="card-img-top" alt="...">
@@ -23,7 +26,7 @@
                   <h5 class="card-title">{{course["name"]}}</h5>
                   <p class="card-text ">Total duration <span class="badge badge-secondary">{{course["duration"]}}</span></p>
                   <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{course['progress']}}%;" aria-valuenow="{{course['progress']}}" aria-valuemin="0" aria-valuemax="100">{{course['progress']}}%</div>
                   </div>
                   <br>
                   <a href="#" class="btn btn-primary">Resume ></a>

@@ -25,8 +25,10 @@ class Course(Jsoner):
             self.videoIndex = 0
             self.stoppedAtTime = 0
             self.duration = 0
+            self.durationPlayed = 0
             for subModule in self.subModuleList:
                 self.duration+=subModule.duration
+                self.durationPlayed+=subModule.durationPlayed
         else:
             self.directoryPath = dictForm.get("directoryPath")
             self.subModuleList = []
@@ -36,6 +38,7 @@ class Course(Jsoner):
             self.stoppedAtTime = dictForm.get("stoppedAtTime")
             self.videoIndex = dictForm.get("videoIndex")
             self.duration = dictForm.get("duration")
+            self.durationPlayed = dictForm.get("durationPlayed")
             
 
     def createModule(self) -> list:
@@ -68,8 +71,10 @@ class SubModule:
             if directoryPath != None:
                 self.videoList=self.setVideoList(scan_videofiles(directoryPath,metadata.setup.supported_video_formats))
             self.duration = 0
+            self.durationPlayed = 0
             for video in self.videoList:
                 self.duration+=video.duration
+                self.durationPlayed+=video.durationPlayed
         else:
             self.directoryPath = dictForm.get("directoryPath")
             self.name = dictForm.get("name")
@@ -77,6 +82,7 @@ class SubModule:
             for video in dictForm.get("videoList"):
                 self.videoList.append(VideoFile(dictForm=video))
             self.duration = dictForm.get("duration")
+            self.durationPlayed = dictForm.get("durationPlayed")
                
     def setVideoList(self, videoFilesList: list) -> list:
         videoList = []
@@ -109,7 +115,7 @@ class VideoFile:
     
     def getThumbnailImage(self) -> str:
         subprocess.call([
-            "ffmpeg", "-ss", "00:00:00.02","-i", "%s" % self.path, "-vf", "'scale=250:250:force_original_aspect_ratio=decrease'",
+            "ffmpeg", "-ss", "00:00:00.01","-i", "%s" % self.path, "-vf", "'scale=250:250:force_original_aspect_ratio=decrease'",
               "-vframes", "1", "%s" %metadata.setup.temporary_thumbnail_name
         ])
 
@@ -159,6 +165,7 @@ class CourseManager(Jsoner,Repository):
                 courseInfoDict["duration"]=courseInfoDict["duration"]+str(hrs)+" hrs"
             if seconds!=0:
                 courseInfoDict["duration"]=courseInfoDict["duration"]+str(seconds)+" seconds"
+            courseInfoDict["progress"] = int(self.courseList[i].durationPlayed/self.courseList[i].duration)
             courseListTemp.append(courseInfoDict)
         return courseListTemp
 

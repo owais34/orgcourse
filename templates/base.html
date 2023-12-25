@@ -7,11 +7,16 @@
     <link rel="stylesheet" href="/static/css/bootstrap.css">
     <script src="/static/js/jquery-3.6.0.js"></script>
     <script src="/static/js/bootstrap.js"></script>
+    <style>
+      body {
+        background-color: #ffebee;
+      }
+    </style>
     <title>{% block title %}{% endblock %}</title>
     {% endblock %}
 </head>
 <body>
-
+  {% block navbar %}
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
       <a class="navbar-brand" href="#"> 🌚 Yourdemy</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,7 +29,9 @@
             <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
           </li> -->
           <li class="nav-item active mx-2">
-            <button type="button" class="btn btn-outline-warning">Add another playlist</button>
+            <a href="/add">
+            <button type="button" class="btn btn-outline-warning" >Add another playlist</button>
+            </a>
           </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -33,8 +40,8 @@
         </form>
       </div>
     </nav>
-
-    <div class="container-fluid bg-gray mx-0 mt-4">
+  {% endblock %}
+    <div class="container-fluid  mx-0 mt-4">
       {% block content %}
         {% endblock %}
     </div>
