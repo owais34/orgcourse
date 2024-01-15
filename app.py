@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for ,send_file,request
 from metadata.setup import init
-from utils.course_module import CourseManager
+from utils.course_module import CourseManager,Course
 from utils.index_generator import IndexGenerator
 import os
 import json
@@ -69,9 +69,10 @@ def add():
     if request.method == 'GET':
         return render_template("add.html")
     else:
-        print(json.loads(request.data))
-        
-        return redirect("/")
+        body = json.loads(request.data)
+        # add functionaliy
+        course_manager_master.addCourse(Course(body.get("fullPath")))
+        return "OK"
 
 
 

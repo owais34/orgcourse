@@ -24,10 +24,11 @@ const handleSubmit =() =>{
         })
     })
     .then(response => {
-
+        console.log(response)
+        window.location.href = `${baseUrl}/`
     })
     .catch(err => {
-
+        console.log(err)
     })
 }
 

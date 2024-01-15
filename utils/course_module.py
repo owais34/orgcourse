@@ -20,7 +20,7 @@ class Course(Jsoner):
     def __init__(self, directoryPath=None, dictForm=None):
         if dictForm == None:
             self.directoryPath = directoryPath
-            self.subModuleList = self.createModule()
+            self.subModuleList = self.createModuleList()
             self.moduleIndex = 0
             self.videoIndex = 0
             self.stoppedAtTime = 0
@@ -41,16 +41,18 @@ class Course(Jsoner):
             self.durationPlayed = dictForm.get("durationPlayed")
             
 
-    def createModule(self) -> list:
+    def createModuleList(self) -> list:
         subModuleList = []
-        subModuleDirectoryList = scan_sub_dirs(self.directoryPath)
-        if subModuleList.__len__ == 0:
-            dummySubmodule = SubModule(directoryPath=None,name="dummysubmodule")
-            subModuleList.append(dummySubmodule)
-        else:
-            for subModuleDirectory in subModuleDirectoryList:
-                subModuleList.append(SubModule(subModuleDirectory["path"],subModuleDirectory["name"]))
+        subDirectoryList = scan_sub_dirs(self.directoryPath)
+        for subDirectory in subDirectoryList:
+            subModuleTemporary = SubModule(subDirectory["path"],subDirectory["name"])
+            if subModuleTemporary.duration != 0:
+                subModuleList.append(subModuleTemporary)
         
+        if len(subModuleList) == 0:
+            dummySubmodule = SubModule(directoryPath=self.directoryPath,name="dummysubmodule")
+            
+            subModuleList.append(dummySubmodule)
         return subModuleList
     
     # def getCurrentPlayable(self) -> vlc.MediaPlayer:
@@ -60,7 +62,7 @@ class Course(Jsoner):
 
 
 
-class SubModule:
+class SubModule(Jsoner):
     #directoryPath
     #videoList
     def __init__(self,directoryPath=None,name=None,dictForm=None):
@@ -110,8 +112,23 @@ class VideoFile:
             self.durationPlayed = dictForm.get("durationPlayed")
 
     def getDurationMs(self) -> int:
-        durationMs = int(float(ffmpeg.probe(self.path)["streams"][0]["duration"]) * 1000)
-        return durationMs
+        durationMs = 0
+        try:
+            #durationMs = int(float(ffmpeg.probe(self.path)["streams"][0]["duration"]) * 1000)
+            print(ffmpeg.probe(self.path)["streams"][0])
+            raw_duration = ffmpeg.probe(self.path)["streams"][0].get("duration")
+            if raw_duration == None:
+                raw_duration = ffmpeg.probe(self.path)["streams"][0].get("tags").get("DURATION")
+            durationMs = int(float(raw_duration)*1000)
+        except Exception as e:
+            print(e)
+            raw_duration = raw_duration.split(":")
+            durationMs += int(raw_duration[0])*60*60*1000
+            durationMs += int(raw_duration[1])*60*1000
+            durationMs += int(float(raw_duration[2])*1000)
+        finally:
+            print(durationMs)
+            return durationMs
     
     def getThumbnailImage(self) -> str:
         subprocess.call([
@@ -160,12 +177,19 @@ class CourseManager(Jsoner,Repository):
             seconds = int(self.courseList[i].duration)/1000
             hrs = int(seconds / 3600)
             seconds = int(seconds % 3600)
+            mins = int(seconds/60)
+            seconds = int(seconds%60)
             courseInfoDict["duration"]= ""
             if hrs != 0:
-                courseInfoDict["duration"]=courseInfoDict["duration"]+str(hrs)+" hrs"
+                courseInfoDict["duration"]=courseInfoDict["duration"]+str(hrs)+" h "
+            if mins!=0:
+                courseInfoDict["duration"]=courseInfoDict["duration"]+str(mins)+" m "
             if seconds!=0:
-                courseInfoDict["duration"]=courseInfoDict["duration"]+str(seconds)+" seconds"
-            courseInfoDict["progress"] = int(self.courseList[i].durationPlayed/self.courseList[i].duration)
+                courseInfoDict["duration"]=courseInfoDict["duration"]+str(seconds)+" s "
+            if self.courseList[i].duration != 0:
+                courseInfoDict["progress"] = int(self.courseList[i].durationPlayed/self.courseList[i].duration)
+            else:
+                courseInfoDict["progress"] = 0
             courseListTemp.append(courseInfoDict)
         return courseListTemp
 
