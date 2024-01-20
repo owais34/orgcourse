@@ -21,7 +21,7 @@
     <div class="row  justify-content-center pt-4">
         {% for course in  course_list%} 
             <div class="card m-4 animate" style="width: 18rem;">
-                <img src="https://i.pinimg.com/564x/61/2d/9d/612d9d6e70fe54f4c10c41eaac9508af.jpg" height="250px" class="card-img-top" alt="...">
+                <img src="/static/images/VideoIcon.jpg" height="200px" class="card-img-top" alt="...">
                 <div class="card-body">
                   <h5 class="card-title">{{course["name"]}}</h5>
                   <p class="card-text ">Total duration <span class="badge badge-secondary">{{course["duration"]}}</span></p>
@@ -29,7 +29,7 @@
                     <div class="progress-bar bg-success" role="progressbar" style="width: {{course['progress']}}%;" aria-valuenow="{{course['progress']}}" aria-valuemin="0" aria-valuemax="100">{{course['progress']}}%</div>
                   </div>
                   <br>
-                  <a href="#" class="btn btn-primary">Resume ></a>
+                  <a href="/resume/{{loop.index0}}" class="btn btn-primary">Resume ></a>
                 </div>
               </div>
         {% endfor %}

@@ -104,12 +104,14 @@ class VideoFile:
             self.name = name
             self.duration = self.getDurationMs()
             self.durationPlayed = 0
+            # self.thumbNailImage = ""
 
         else:
             self.path = dictForm.get("path")
             self.name = dictForm.get("name")
             self.duration = dictForm.get("duration")
             self.durationPlayed = dictForm.get("durationPlayed")
+            # self.thumbNailImage = dictForm.get("thumbNailImage")
 
     def getDurationMs(self) -> int:
         durationMs = 0
@@ -131,10 +133,16 @@ class VideoFile:
             return durationMs
     
     def getThumbnailImage(self) -> str:
+        image_path = str(self.path).replace("\\","_")+".jpeg"
+        # %metadata.setup.temporary_thumbnail_name
         subprocess.call([
             "ffmpeg", "-ss", "00:00:00.01","-i", "%s" % self.path, "-vf", "'scale=250:250:force_original_aspect_ratio=decrease'",
-              "-vframes", "1", "%s" %metadata.setup.temporary_thumbnail_name
+              "-vframes", "1", "%s" % image_path
         ])
+
+        shutil.move(image_path, "./static/images")
+        self.thumbNailImage = image_path
+        
 
 
 

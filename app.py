@@ -73,6 +73,12 @@ def add():
         # add functionaliy
         course_manager_master.addCourse(Course(body.get("fullPath")))
         return "OK"
+    
+@app.route("/resume/<index>", methods=["GET"])
+def resume(index):
+    if request.method == "GET":
+        return render_template("resume.html", course = json.loads(course_manager_master.courseList[index].getJson()))
+
 
 
 
