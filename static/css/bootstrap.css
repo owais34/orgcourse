@@ -8979,7 +8979,7 @@ a.text-dark:hover, a.text-dark:focus {
 
 .animate {
   transition-property: all;
-  transition-timing-function: linear;
+  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
   transition-delay: 200ms;
 }
 .animate:hover {

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for ,send_file,request
 from metadata.setup import init
+from flask_cors import CORS, cross_origin
 from utils.course_module import CourseManager,Course
 from utils.index_generator import IndexGenerator
 import os
@@ -14,6 +15,7 @@ course_resumed = None
 
 
 app = Flask(__name__) 
+CORS(app, support_credentials=True)
 
 
 # @app.route("/") 
@@ -54,15 +56,17 @@ app = Flask(__name__)
 
 @app.route("/cdn/<path>")
 def custom_static(path):
-    path = str(path).replace(">",os.path.sep)
-    print(path)
-    
+    path = str(path).replace(">",os.path.sep)    
     return send_file(path)
 
 
 @app.route("/")
 def home():
     return render_template("index.html", course_list = course_manager_master.listCourses())
+
+@app.route("/homeData")
+def homeData():
+    return json.dumps(course_manager_master.listCourses())
 
 @app.route("/add", methods=['GET', 'POST'])
 def add():
@@ -77,7 +81,14 @@ def add():
 @app.route("/resume/<index>", methods=["GET"])
 def resume(index):
     if request.method == "GET":
-        return render_template("resume.html", course = json.loads(course_manager_master.courseList[index].getJson()))
+        return course_manager_master.courseList[int(index)].getJson()
+    
+
+@app.route("/update", methods=['POST','GET'])
+def update():
+    body = json.loads(request.data)
+    result = course_manager_master.updatePlaytime(body)
+    return str(result)
 
 
 

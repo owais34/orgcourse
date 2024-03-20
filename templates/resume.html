@@ -17,7 +17,7 @@
       <div class="row">
         <div class="col-12 col-lg-9 bg-primary">
             <video controls width="100%">
-                <source src="{{course['subModuleList'][course['moduleIndex']]['videoList'][course['videoIndex']]['path']}}"/>
+                <source src="/cdn/{{course['subModuleList'][course['moduleIndex']]['videoList'][course['videoIndex']]['path'].replace('\\','>')}}"/>
             </video>
         </div>
         <div class="col-12 col-lg-3 bg-secondary">

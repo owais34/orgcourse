@@ -60,6 +60,20 @@ class Course(Jsoner):
     #     mediaPlayerInstance.set_time(self.stoppedAtTime)
     #     return mediaPlayerInstance
 
+    def updatePlaytime(self, moduleIndex, videoIndex, currentTime):
+
+        is_updated = self.subModuleList[moduleIndex].updatePlaytime(videoIndex, currentTime)
+        if self.moduleIndex != moduleIndex or self.videoIndex != videoIndex or self.stoppedAtTime!=currentTime:
+            self.moduleIndex=moduleIndex
+            self.videoIndex=videoIndex
+            self.stoppedAtTime=currentTime
+            is_updated = True
+        if is_updated:
+            self.durationPlayed=0
+            for subModule in self.subModuleList:
+                self.durationPlayed+=subModule.durationPlayed
+        
+        return is_updated
 
 
 class SubModule(Jsoner):
@@ -91,6 +105,16 @@ class SubModule(Jsoner):
         for videoFile in videoFilesList:
             videoList.append(VideoFile(path=videoFile["path"],name=videoFile["name"]))
         return videoList
+    
+    def updatePlaytime(self, videoIndex, currentTime):
+        
+        is_updated = self.videoList[videoIndex].updatePlaytime(currentTime)
+        if is_updated:
+            self.durationPlayed = 0
+            for video in self.videoList:
+                self.durationPlayed+=video.durationPlayed
+
+        return is_updated
             
 
 
@@ -142,9 +166,16 @@ class VideoFile:
 
         shutil.move(image_path, "./static/images")
         self.thumbNailImage = image_path
+
+    def updatePlaytime(self, currentTime):
+        if (currentTime>self.durationPlayed):
+            if (currentTime>self.duration):
+                self.durationPlayed=self.duration
+            else:
+                self.durationPlayed = currentTime
+            return True
+        return True
         
-
-
 
 
 class CourseManager(Jsoner,Repository):
@@ -152,9 +183,14 @@ class CourseManager(Jsoner,Repository):
         dictForm = self.loadFromRepo()
         if (dictForm == None):
             self.courseList = []
+            self.counter = 0
             self.persistChanges(self.getJson())
         else:
             self.courseList = []
+            if dictForm.get("counter")!=None:
+                self.counter = dictForm.get("counter")
+            else:
+                self.counter = 0
             for course in dictForm.get("courseList"):
                 self.courseList.append(Course(dictForm=course))
 
@@ -195,11 +231,25 @@ class CourseManager(Jsoner,Repository):
             if seconds!=0:
                 courseInfoDict["duration"]=courseInfoDict["duration"]+str(seconds)+" s "
             if self.courseList[i].duration != 0:
-                courseInfoDict["progress"] = int(self.courseList[i].durationPlayed/self.courseList[i].duration)
+                courseInfoDict["progress"] = int((self.courseList[i].durationPlayed/self.courseList[i].duration)*100)
             else:
                 courseInfoDict["progress"] = 0
             courseListTemp.append(courseInfoDict)
         return courseListTemp
+    
+    def updatePlaytime(self, data: dict):
+        
+        id = data.get('id')
+        moduleIndex = data.get("currentModule")
+        videoIndex = data.get("currentVideo")
+        currentTime = int(data.get("currentTime")*1000) # in ms
+        
+        result = self.courseList[id].updatePlaytime(moduleIndex, videoIndex, currentTime)
+        if self.counter == 0:
+            self.persistChanges(self.getJson())
+        self.counter = (self.counter + 1)%10
+
+        return result
 
             
 
