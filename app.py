@@ -97,4 +97,4 @@ if __name__ == "__main__":
     init()
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(debug=True) 
+    app.run('0.0.0.0', port=5000) 
