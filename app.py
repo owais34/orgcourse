@@ -62,7 +62,7 @@ def custom_static(path):
 
 @app.route("/")
 def home():
-    return render_template("index.html", course_list = course_manager_master.listCourses())
+    return json.dumps(course_manager_master.listCourses())
 
 @app.route("/homeData")
 def homeData():
